@@ -36,6 +36,9 @@ function addTodo(e) {
       alertSuccess.style.display = "none";
     }, 1500);
 
+    // Datum skapat
+    const currentDate = getCurrentDate();
+
     saveLocalTodos(todoInput.value);
     // skapat todo div
     const todoDiv = document.createElement("div");
@@ -43,7 +46,12 @@ function addTodo(e) {
 
     // skapat todo li
     const newTodo = document.createElement("li");
-    newTodo.innerText = todoInput.value;
+    newTodo.innerHTML = `
+      <span class="todo-text">${todoInput.value}</span>
+      <span class="todo-dates">
+        <span class="created-date">(${currentDate})</span>
+        <span class="completed-date"></span>
+      </span>`;
     newTodo.classList.add("todo-item");
     todoDiv.appendChild(newTodo);
 
@@ -67,6 +75,12 @@ function addTodo(e) {
   }
 }
 
+function getCurrentDate() {
+  const options = { year: "numeric", month: "numeric", day: "numeric" };
+  const currentDate = new Date().toLocaleDateString("sv-SE", options);
+  return currentDate;
+}
+
 function deleteCheck(e) {
   const item = e.target;
 
@@ -84,6 +98,14 @@ function deleteCheck(e) {
   if (item.classList[0] === "complete-btn") {
     const todo = item.parentElement;
     todo.classList.toggle("completed");
+
+    const completedDate = todo.querySelector(".completed-date");
+    if (todo.classList.contains("completed")) {
+      const currentDate = getCurrentDate();
+      completedDate.innerText = `Klartdatum: ${currentDate}`;
+    } else {
+      completedDate.innerText = "";
+    }
   }
 }
 
