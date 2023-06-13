@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <title>Todo List</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Vad händer, Servet</h1>
+    </header>
+    <main>
+      <section class="hero">
+        <form>
+          <div class="search">
+            <input type="text" class="todo-input" placeholder="Lägg..." />
+            <button class="todo-button" type="submit">
+              <i class="fas fa-plus-circle"></i>
+            </button>
+          </div>
+          <div class="select">
+            <select name="todos" class="filter-todo">
+              <option value="all">Alla</option>
+              <option value="completed">Färdiga</option>
+              <option value="uncompleted">Ofärdiga</option>
+            </select>
+          </div>
+        </form>
+        <section class="todo-container">
+          <ul class="todo-list"></ul>
+        </section>
+        <section class="alert-wrapper">
+          <div class="alert-success">
+            <div>Godkänd</div>
+          </div>
+          <div class="alert-warning">
+            <div>Kan inte lämnas tom!</div>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script src="index.js"></script>
+  </body>
+</html>
