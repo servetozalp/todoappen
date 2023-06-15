@@ -171,6 +171,11 @@ select {
   padding: 0 0.5rem;
 }
 
+.todo-item {
+  display: flex;
+  flex-flow: column;
+}
+
 .complete-btn,
 .trash-btn {
   background-color: #960303;
@@ -227,4 +232,5 @@ select {
 
 .todo-dates {
   font-size: 1rem;
+  text-decoration: none;
 }

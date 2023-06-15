@@ -1,26 +1,33 @@
+// global variable
+let todos = [];
+const DUMMY_TODO_SIZE = 150;
 // selectors
-const todoInput = document.querySelector(".todo-input");
-const todoButton = document.querySelector(".todo-button");
-const todoList = document.querySelector(".todo-list");
-const todoFilter = document.querySelector(".filter-todo");
+const todoInput = document.querySelector(".todo-input"); // element av todo text
+const todoButton = document.querySelector(".todo-button"); // element av todo button add
+const todoList = document.querySelector(".todo-list"); // element av todo list view, usually process of append
+const todoFilter = document.querySelector(".filter-todo"); // element av status filter
 
 // alerts
-const alertWarning = document.querySelector(".alert-warning");
-const alertSuccess = document.querySelector(".alert-success");
+const alertWarning = document.querySelector(".alert-warning"); // validation warnings
+const alertSuccess = document.querySelector(".alert-success"); // if todo tillagd, success info
 
 // events
+
 document.addEventListener("DOMContentLoaded", function () {
-  getTodos();
+  getTodos(); // fetch from local storage - replace with dummy
 });
+
 todoButton.addEventListener("click", addTodo);
+
 todoList.addEventListener("click", deleteCheck);
+
 todoFilter.addEventListener("click", filterTodo);
 
 // functions
 function addTodo(e) {
   e.preventDefault();
 
-  const isEmpty = (str) => !str.trim().length;
+  const isEmpty = (str) => !str.length;
 
   if (isEmpty(todoInput.value)) {
     alertWarning.style.display = "block";
@@ -31,19 +38,14 @@ function addTodo(e) {
     // clear todo input value
     todoInput.value = "";
   } else {
-    alertSuccess.style.display = "block";
-    setTimeout(() => {
-      alertSuccess.style.display = "none";
-    }, 1500);
-
     // Datum skapat
     const currentDate = getCurrentDate();
 
-    saveLocalTodos(todoInput.value);
+    saveDummyTodos(todoInput.value); // push todo input to local storage , replace with dummy
     // skapat todo div
     const todoDiv = document.createElement("div");
     todoDiv.classList.add("todo");
-
+    todoDiv.setAttribute("id", todos.length + DUMMY_TODO_SIZE);
     // skapat todo li
     const newTodo = document.createElement("li");
     newTodo.innerHTML = `
@@ -83,29 +85,16 @@ function getCurrentDate() {
 
 function deleteCheck(e) {
   const item = e.target;
-
+  const todo = item.parentElement;
+  const id = todo.id;
   // delete todo
   if (item.classList[0] === "trash-btn") {
-    const todo = item.parentElement;
-    todo.classList.add("fall");
-    removeLocaleStorage(todo);
-    todo.addEventListener("transitionend", function () {
-      todo.remove();
-    });
+    removeDummyTodo(id, todo);
   }
 
   // check mark
   if (item.classList[0] === "complete-btn") {
-    const todo = item.parentElement;
-    todo.classList.toggle("completed");
-
-    const completedDate = todo.querySelector(".completed-date");
-    if (todo.classList.contains("completed")) {
-      const currentDate = getCurrentDate();
-      completedDate.innerText = `Klartdatum: ${currentDate}`;
-    } else {
-      completedDate.innerText = "";
-    }
+    updateDummyTodo(id, todo);
   }
 }
 
@@ -135,7 +124,25 @@ function filterTodo(e) {
 }
 
 // locale Storage
-function saveLocalTodos(todo) {
+function saveDummyTodos(todo) {
+  const todoItem = { todo, completed: false, userId: 26 };
+
+  fetch("https://dummyjson.com/todos/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(todoItem),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (Object.keys(data).length > 0) {
+        todos.push(data);
+        alertSuccess.style.display = "block";
+        setTimeout(() => {
+          alertSuccess.style.display = "none";
+        }, 1500);
+      }
+    });
+  /*
   let todos;
   if (localStorage.getItem("todos") === null) {
     todos = [];
@@ -144,43 +151,55 @@ function saveLocalTodos(todo) {
   }
 
   todos.push(todo);
-  localStorage.setItem("todos", JSON.stringify(todos));
+  localStorage.setItem("todos", JSON.stringify(todos));*/
 }
 
 function getTodos() {
-  let todos;
+  /*
   if (localStorage.getItem("todos") === null) {
     todos = [];
   } else {
     todos = JSON.parse(localStorage.getItem("todos"));
-  }
+  }*/
 
-  todos.forEach((todo) => {
-    // skapat todo div
-    const todoDiv = document.createElement("div");
-    todoDiv.classList.add("todo");
+  fetch("https://dummyjson.com/todos/user/26")
+    .then((res) => res.json())
+    .then((data) => {
+      todos = data.todos;
+      todos.forEach((todoItem) => {
+        const todo = todoItem.todo;
+        const completed = todoItem.completed;
+        const id = todoItem.id;
+        // skapat todo div
+        const todoDiv = document.createElement("div");
+        todoDiv.setAttribute("id", id);
+        todoDiv.classList.add("todo");
+        if (completed) {
+          todoDiv.classList.add("completed");
+        }
 
-    // skapat todo li
-    const newTodo = document.createElement("li");
-    newTodo.innerText = todo;
-    newTodo.classList.add("todo-item");
-    todoDiv.appendChild(newTodo);
+        // skapat todo li
+        const newTodo = document.createElement("li");
+        newTodo.innerText = todo;
+        newTodo.classList.add("todo-item");
+        todoDiv.appendChild(newTodo);
 
-    // skapat check button
-    const completedButton = document.createElement("button");
-    completedButton.innerHTML = "<i class='fas fa-check-circle'></i>";
-    completedButton.classList.add("complete-btn");
-    todoDiv.appendChild(completedButton);
+        // skapat check button
+        const completedButton = document.createElement("button");
+        completedButton.innerHTML = "<i class='fas fa-check-circle'></i>";
+        completedButton.classList.add("complete-btn");
+        todoDiv.appendChild(completedButton);
 
-    // skapat trash button
-    const trashButton = document.createElement("button");
-    trashButton.innerHTML = "<i class='fa fa-minus-circle'></i>";
-    trashButton.classList.add("trash-btn");
-    todoDiv.appendChild(trashButton);
+        // skapat trash button
+        const trashButton = document.createElement("button");
+        trashButton.innerHTML = "<i class='fa fa-minus-circle'></i>";
+        trashButton.classList.add("trash-btn");
+        todoDiv.appendChild(trashButton);
 
-    // append till list
-    todoList.appendChild(todoDiv);
-  });
+        // append till list
+        todoList.appendChild(todoDiv);
+      });
+    });
 }
 
 function removeLocaleStorage(todo) {
@@ -193,4 +212,46 @@ function removeLocaleStorage(todo) {
   const todoIndex = todo.children[1].innerText;
   todos.splice(todos.indexOf(todoIndex), 1);
   localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+function updateDummyTodo(id, todoEl) {
+  /* updating completed status of todo with id 1 */
+  const completed = todoEl.classList.contains("completed");
+  fetch(`https://dummyjson.com/todos/${id}`, {
+    method: "PUT" /* or PATCH */,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      completed: !completed,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      // if successfull
+      if (Object.keys(data).length > 0) {
+        todoEl.classList.toggle("completed");
+        const completedDate = todoEl.querySelector(".completed-date");
+        if (todoEl.classList.contains("completed")) {
+          const currentDate = getCurrentDate();
+          completedDate.innerText = `Klartdatum: ${currentDate}`;
+        } else {
+          completedDate.innerText = "";
+        }
+      }
+    });
+}
+
+function removeDummyTodo(id, todoEl) {
+  fetch(`https://dummyjson.com/todos/${id}`, {
+    method: "DELETE",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      // if successfull
+      if (Object.keys(data).length > 0) {
+        todoEl.classList.add("fall");
+        todoEl.addEventListener("transitionend", function () {
+          todoEl.remove();
+        });
+      }
+    });
 }
