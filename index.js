@@ -41,7 +41,7 @@ function addTodo(e) {
     // Datum skapat
     const currentDate = getCurrentDate();
 
-    saveDummyTodos(todoInput.value); // push todo input to local storage , replace with dummy
+    saveDummyTodos(todoInput.value);
     // skapat todo div
     const todoDiv = document.createElement("div");
     todoDiv.classList.add("todo");
@@ -87,7 +87,7 @@ function deleteCheck(e) {
   const item = e.target;
   const todo = item.parentElement;
   const id = todo.id;
-  // delete todo
+  // tabort todo
   if (item.classList[0] === "trash-btn") {
     removeDummyTodo(id, todo);
   }

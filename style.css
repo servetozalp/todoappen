@@ -64,6 +64,12 @@ h1 {
   font-weight: 400;
 }
 
+h3 {
+  font-weight: 400;
+  font-size: 1.4rem;
+  margin-bottom: 1.6rem;
+}
+
 header,
 form {
   display: flex;
@@ -73,15 +79,6 @@ form {
 
 form {
   position: relative;
-}
-
-.hero {
-  max-width: 140rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  margin: 0 auto;
-  padding: 0 3.2rem;
-  align-items: center;
 }
 
 .search {
