@@ -8,13 +8,13 @@ const todoList = document.querySelector(".todo-list"); // element av todo list v
 const todoFilter = document.querySelector(".filter-todo"); // element av status filter
 
 // alerts
-const alertWarning = document.querySelector(".alert-warning"); // validation warnings
+const alertWarning = document.querySelector(".alert-warning"); // validation varningar
 const alertSuccess = document.querySelector(".alert-success"); // if todo tillagd, success info
 
 // events
 
 document.addEventListener("DOMContentLoaded", function () {
-  getTodos(); // fetch from local storage - replace with dummy
+  getTodos(); // fetch from local storage - ersatt med dummy
 });
 
 todoButton.addEventListener("click", addTodo);
