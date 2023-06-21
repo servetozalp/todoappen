@@ -226,8 +226,3 @@ select {
   opacity: 0.5;
   text-decoration: line-through;
 }
-
-.todo-dates {
-  font-size: 1rem;
-  text-decoration: none;
-}

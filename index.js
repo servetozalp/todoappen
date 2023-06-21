@@ -1,6 +1,7 @@
 // global variable
 let todos = [];
 const DUMMY_TODO_SIZE = 150;
+const DUMMY_USER_ID = 9;
 // selectors
 const todoInput = document.querySelector(".todo-input"); // element av todo text
 const todoButton = document.querySelector(".todo-button"); // element av todo button add
@@ -27,20 +28,17 @@ todoFilter.addEventListener("click", filterTodo);
 function addTodo(e) {
   e.preventDefault();
 
-  const isEmpty = (str) => !str.length;
+  const isEmpty = (str) => !str.trim().length;
 
+  // Validera om strängen för todolistan är tom.
   if (isEmpty(todoInput.value)) {
     alertWarning.style.display = "block";
     setTimeout(() => {
       alertWarning.style.display = "none";
     }, 1500);
 
-    // clear todo input value
     todoInput.value = "";
   } else {
-    // Datum skapat
-    const currentDate = getCurrentDate();
-
     saveDummyTodos(todoInput.value);
     // skapat todo div
     const todoDiv = document.createElement("div");
@@ -48,12 +46,7 @@ function addTodo(e) {
     todoDiv.setAttribute("id", todos.length + DUMMY_TODO_SIZE);
     // skapat todo li
     const newTodo = document.createElement("li");
-    newTodo.innerHTML = `
-      <span class="todo-text">${todoInput.value}</span>
-      <span class="todo-dates">
-        <span class="created-date">(${currentDate})</span>
-        <span class="completed-date"></span>
-      </span>`;
+    newTodo.innerHTML = `<span class="todo-text">${todoInput.value}</span>`;
     newTodo.classList.add("todo-item");
     todoDiv.appendChild(newTodo);
 
@@ -75,12 +68,6 @@ function addTodo(e) {
     // clear todo input value
     todoInput.value = "";
   }
-}
-
-function getCurrentDate() {
-  const options = { year: "numeric", month: "numeric", day: "numeric" };
-  const currentDate = new Date().toLocaleDateString("sv-SE", options);
-  return currentDate;
 }
 
 function deleteCheck(e) {
@@ -123,9 +110,8 @@ function filterTodo(e) {
   });
 }
 
-// locale Storage
 function saveDummyTodos(todo) {
-  const todoItem = { todo, completed: false, userId: 26 };
+  const todoItem = { todo, completed: false, userId: DUMMY_USER_ID };
 
   fetch("https://dummyjson.com/todos/add", {
     method: "POST",
@@ -142,27 +128,10 @@ function saveDummyTodos(todo) {
         }, 1500);
       }
     });
-  /*
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
-
-  todos.push(todo);
-  localStorage.setItem("todos", JSON.stringify(todos));*/
 }
 
 function getTodos() {
-  /*
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }*/
-
-  fetch("https://dummyjson.com/todos/user/26")
+  fetch(`https://dummyjson.com/todos/user/${DUMMY_USER_ID}`)
     .then((res) => res.json())
     .then((data) => {
       todos = data.todos;
@@ -202,18 +171,6 @@ function getTodos() {
     });
 }
 
-function removeLocaleStorage(todo) {
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
-  const todoIndex = todo.children[1].innerText;
-  todos.splice(todos.indexOf(todoIndex), 1);
-  localStorage.setItem("todos", JSON.stringify(todos));
-}
-
 function updateDummyTodo(id, todoEl) {
   /* updating completed status of todo with id 1 */
   const completed = todoEl.classList.contains("completed");
@@ -229,13 +186,6 @@ function updateDummyTodo(id, todoEl) {
       // if successfull
       if (Object.keys(data).length > 0) {
         todoEl.classList.toggle("completed");
-        const completedDate = todoEl.querySelector(".completed-date");
-        if (todoEl.classList.contains("completed")) {
-          const currentDate = getCurrentDate();
-          completedDate.innerText = `Klartdatum: ${currentDate}`;
-        } else {
-          completedDate.innerText = "";
-        }
       }
     });
 }
