@@ -78,6 +78,10 @@ form {
 }
 
 form {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  margin-bottom: 3.2rem;
   position: relative;
 }
 
