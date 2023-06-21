@@ -114,7 +114,7 @@ select {
   appearance: none;
   outline: none;
   border: none;
-  width: 12rem;
+  width: 15rem;
   padding: 1rem;
   cursor: pointer;
 }
